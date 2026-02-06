@@ -308,7 +308,7 @@ IFS='|' read -ra FIELD_ARRAY <<< "$FIELD_NAMES"
 for field in "${FIELD_ARRAY[@]}"; do
     [[ -z "$field" ]] && continue
     if ! echo "$KNOWN_FIELDS" | grep -qw "$field"; then
-        warn "Unknown field will be ignored: $field"
+        error "Unknown frontmatter field: $field"
     fi
 done
 

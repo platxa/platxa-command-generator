@@ -452,6 +452,33 @@ disable-model-invocation: maybe
         assert result.returncode == 1, "Expected exit 1 for invalid boolean"
 
 
+class TestUnknownFields:
+    """Tests for unknown frontmatter field rejection."""
+
+    @pytest.mark.frontmatter
+    def test_unknown_field_fails(
+        self,
+        temp_command_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Unknown frontmatter fields are rejected."""
+        command_md = temp_command_dir / "unknown-field.md"
+        command_md.write_text("""---
+description: run some tests
+banana: yellow
+---
+
+# Unknown Field
+""")
+
+        result = run_validate_frontmatter(command_md)
+
+        assert result.returncode == 1, (
+            f"Expected exit 1 for unknown field. stderr: {result.stderr}"
+        )
+        assert "unknown" in result.stderr.lower() or "banana" in result.stderr.lower()
+
+
 class TestSelfValidation:
     """Tests for SKILL.md validation in directory mode."""
 
