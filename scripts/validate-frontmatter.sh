@@ -236,9 +236,9 @@ fi
 if [[ -n "$ARG_HINT" ]]; then
     info "argument-hint present: $ARG_HINT"
 
-    # Must use bracket format: [arg] or <arg>
-    if [[ ! "$ARG_HINT" =~ [\[\<] ]]; then
-        error "argument-hint should use bracket format: [arg] or <arg>"
+    # Must use square bracket format: [arg] (not <arg>)
+    if [[ ! "$ARG_HINT" =~ \[ ]]; then
+        error "argument-hint must use [bracket] format (not <angle> brackets)"
     else
         info "argument-hint format valid"
     fi

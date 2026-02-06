@@ -217,12 +217,12 @@ class TestArgumentHintValidation:
         assert result.returncode == 0, f"Expected exit 0. stderr: {result.stderr}"
 
     @pytest.mark.frontmatter
-    def test_angle_bracket_hint_passes(
+    def test_angle_bracket_hint_fails(
         self,
         temp_command_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Angle bracket argument hint passes."""
+        """Angle bracket argument hint is rejected (must use [bracket])."""
         create_command_md(
             temp_command_dir,
             name="angle-hint",
@@ -231,7 +231,10 @@ class TestArgumentHintValidation:
 
         result = run_validate_frontmatter(temp_command_dir / "angle-hint.md")
 
-        assert result.returncode == 0, f"Expected exit 0. stderr: {result.stderr}"
+        assert result.returncode == 1, (
+            f"Expected exit 1 for <angle> brackets. stderr: {result.stderr}"
+        )
+        assert "bracket" in result.stderr.lower()
 
     @pytest.mark.frontmatter
     def test_no_bracket_hint_fails(
