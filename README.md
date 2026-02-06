@@ -322,7 +322,6 @@ Each agent receives context from the previous phase via structured JSON handoffs
 | Project | Description |
 |---------|-------------|
 | [platxa-skill-generator](https://github.com/platxa/platxa-skill-generator) | Generates Claude Code skills (multi-file directories) |
-| [platxa-agent-generator](https://github.com/platxa/platxa-agent-generator) | Generates Claude Code plugin agents |
 | [platxa-command-builder](https://github.com/platxa/platxa-skill-generator) | Skill for manually building commands (non-autonomous) |
 
 ---
@@ -348,4 +347,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 ---
 
-*Created by [DJ Patel](https://platxa.com) | Platxa*
+**Created by**: DJ Patel — Founder & CEO, Platxa | https://platxa.com
