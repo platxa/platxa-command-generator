@@ -41,6 +41,12 @@ Target users: {target_users}
    - argument-hint: Bracket-wrapped hint for parameterized commands
    - model: Override model if specific reasoning needed
    - disable-model-invocation: Prevent AI from invoking the command
+     Set `disable-model-invocation: true` for commands with irreversible side effects:
+     - Deploy/release commands (push to production, publish packages)
+     - Git operations that affect remotes (push, force-push, delete branch)
+     - Destructive operations (delete resources, drop databases, reset --hard)
+     - Financial/billing actions (charge, refund, transfer)
+     This prevents Claude from autonomously running dangerous commands.
 
 3. **Select Model Override** (if needed): Most commands use the user's default model. Only set `model` when the task demands it:
 
