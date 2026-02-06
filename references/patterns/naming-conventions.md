@@ -64,6 +64,34 @@ Commands are invoked by filename without extension:
 Plugin commands are namespaced:
 - `plugin-name/commands/build.md` → `/plugin-name:build`
 
+## Directory Organization
+
+For large command libraries, organize commands into subdirectories. Subdirectory names become prefixes:
+
+```
+.claude/commands/
+  deploy-staging.md          → /deploy-staging
+  workflows/
+    release.md               → /workflows:release
+    onboard.md               → /workflows:onboard
+  tools/
+    lint.md                  → /tools:lint
+    format.md                → /tools:format
+  db/
+    migrate.md               → /db:migrate
+    seed.md                  → /db:seed
+```
+
+**When to organize into directories**:
+- More than 10 commands in a single directory
+- Commands naturally group by domain (db, api, deploy)
+- Team needs to discover commands by category
+
+**Naming the directories**:
+- Use short, lowercase names (1-2 words)
+- Group by domain, not by action
+- Avoid nesting deeper than one level
+
 ## Duplicate Prevention
 
 Before naming a command:
