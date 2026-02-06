@@ -57,6 +57,21 @@ overall = (clarity * 0.35) + (completeness * 0.30) +
 - Score 5.0-6.9: WARN (improvements suggested)
 - Score < 5.0: FAIL (must rework)
 
+## Bonus Points
+
+Add to overall score (capped at 10.0):
+
+| Criterion | Bonus | How to Detect |
+|-----------|-------|---------------|
+| Verification section present | +0.5 | `## Verification` heading with actionable checks |
+| Guardrails section present | +0.3 | `## Guardrails` heading with read-before-act rules |
+| Default Behavior for $1/$2 | +0.3 | `## Default Behavior` heading when command uses arguments |
+| Realistic examples | +0.2 | Examples use plausible file paths, commands, data |
+
+```
+final_score = min(10.0, overall + bonus)
+```
+
 ## Quick Checks
 
 - [ ] No placeholder content (TODO, TBD, FIXME)
