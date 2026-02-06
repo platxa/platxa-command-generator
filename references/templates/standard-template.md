@@ -113,6 +113,42 @@ Present findings as a table:
 | src/billing.py | No | None | High |
 ```
 
+## Dynamic Features (Optional)
+
+Commands can inject runtime context using these patterns:
+
+### !`bash` Pre-Execution
+
+Output is injected before Claude processes the command:
+
+```markdown
+# Deploy
+
+Current branch: !`git branch --show-current`
+Last commit: !`git log --oneline -1`
+Node version: !`node --version 2>/dev/null || echo "not installed"`
+
+Deploy the current branch to staging.
+```
+
+### @file Content Injection
+
+User-provided file contents injected into the prompt:
+
+```markdown
+# Review
+
+Review the following code:
+
+@file
+
+Check for security issues and naming conventions.
+```
+
+Usage: `/review @src/auth.ts` or `/review @./src/**/*.ts`
+
+See `references/patterns/bash-execution-patterns.md` and `references/patterns/file-reference-patterns.md` for full details.
+
 ## Key Characteristics
 
 - Has `---` frontmatter with description and/or allowed-tools
