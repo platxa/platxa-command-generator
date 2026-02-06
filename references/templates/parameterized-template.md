@@ -56,10 +56,17 @@ Read `$1` to understand its current state before making changes.
 - {Test or check 1 — e.g., run tests on the generated output}
 - {Test or check 2 — e.g., validate the processed target matches expectations}
 
-## Default Behavior
+## Default Behavior (Required)
+
+**This section is mandatory for all parameterized commands.**
 
 If no argument provided:
 {What to do when $1 is empty — detect automatically or ask user}
+
+Choose one strategy:
+- **Auto-detect**: Infer target from context (e.g., current file, git diff)
+- **Ask user**: Use AskUserQuestion to request the missing argument
+- **Fail clearly**: Report what argument is needed and show usage example
 ```
 
 ## Example
@@ -136,6 +143,6 @@ Full args: $ARGUMENTS
 
 - Uses `argument-hint` in frontmatter for user guidance
 - References `$1`, `$2`, or `$ARGUMENTS` in body
-- Always includes fallback behavior for missing arguments
+- **Required**: Default Behavior section must handle missing arguments
 - argument-hint uses bracket notation: `[arg]` for optional, `<arg>` avoided
 - Step 1 validates and reads target before acting (guardrail pattern)
