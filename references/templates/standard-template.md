@@ -40,6 +40,12 @@ allowed-tools:
 
 {Specific instructions with tool usage}
 
+## Verification
+
+{How to verify the command worked correctly:}
+- {Test or check 1 — e.g., run a test suite, validate output}
+- {Test or check 2 — e.g., compare before/after state}
+
 ## Output
 
 {Expected output format and content.}
@@ -84,6 +90,13 @@ For tested files, check if tests cover:
 - Error cases
 - Edge cases
 - Integration points
+
+## Verification
+
+After analysis, verify:
+- Run `pytest --co -q` to confirm discovered test files match report
+- Check that high-priority files without tests are not false negatives
+- Spot-check one "Partial" file to confirm coverage assessment is accurate
 
 ## Output
 

@@ -51,6 +51,12 @@ Use AskUserQuestion to determine:
 
 Show the user what was created and ask for confirmation.
 
+## Verification
+
+{How to verify the command worked correctly for each choice path:}
+- {Test or check 1 — e.g., validate generated files match chosen options}
+- {Test or check 2 — e.g., run tests on the output}
+
 ## Output
 
 {Expected output based on chosen options.}
@@ -109,6 +115,13 @@ Based on choices, create:
 ### Step 4: Verify
 
 Run `pytest tests/test_{resource}.py -v` to confirm tests pass.
+
+## Verification
+
+After generation, verify:
+- `pytest tests/test_{resource}.py -v` passes
+- Route is accessible at expected URL path
+- Schema validation rejects invalid input (test with malformed data)
 
 ## Output
 

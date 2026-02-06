@@ -49,6 +49,13 @@ Read the template from `${CLAUDE_PLUGIN_ROOT}/templates/{template}`.
 
 {Instructions that produce output in the user's project}
 
+## Verification
+
+{How to verify the command worked correctly:}
+- {Test or check 1 — e.g., validate generated files exist in user's project}
+- {Test or check 2 — e.g., run tests or lint on the output}
+- {Plugin resource check — e.g., verify plugin templates were loaded correctly}
+
 ## Output
 
 {Expected output in the user's working directory.}
@@ -100,6 +107,13 @@ Create `src/components/$1/$1.test.tsx` using the test template.
 ### Step 4: Update Index
 
 Add export to `src/components/index.ts`.
+
+## Verification
+
+After generation, verify:
+- `src/components/$1/$1.tsx` exists and matches template conventions
+- `src/components/$1/$1.test.tsx` exists and passes: `npx jest $1.test.tsx`
+- Export is present in `src/components/index.ts`
 
 ## Default Behavior
 

@@ -68,6 +68,13 @@ Use TodoWrite to track phase completion:
 - Mark phases as in_progress when starting
 - Mark phases as completed when exit criteria met
 
+## Verification
+
+{How to verify the entire workflow completed correctly:}
+- {End-to-end check — e.g., run integration test suite}
+- {Phase-level check — e.g., verify each phase exit criteria was met}
+- {Final state check — e.g., compare expected vs actual deliverable}
+
 ## Error Recovery
 
 If a phase fails:
@@ -143,6 +150,13 @@ Safely migrate the database schema through multiple phases.
 ## Progress Tracking
 
 Track each phase with TodoWrite for visibility.
+
+## Verification
+
+After migration completes, verify:
+- `SELECT count(*) FROM {affected_tables}` returns expected row counts
+- Application health check endpoint returns 200
+- Rollback script tested independently in Phase 3
 
 ## Error Recovery
 

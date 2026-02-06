@@ -25,6 +25,13 @@ Template for commands with no frontmatter. Pure markdown instructions.
 2. {Step 2 with concrete action}
 3. {Step 3 with concrete action}
 
+## Verification
+
+{How to verify the command worked correctly:}
+- {Test or check 1 — e.g., run a command, compare output}
+- {Test or check 2 — e.g., expected file state, passing tests}
+- {Test or check 3 — e.g., visual confirmation, screenshot comparison}
+
 ## Output
 
 {What the user should expect when done.}
@@ -48,6 +55,13 @@ Use before creating a pull request to catch common issues.
 3. Verify error handling covers edge cases
 4. Ensure tests exist for new functionality
 5. Check naming conventions match project style
+
+## Verification
+
+After review, verify:
+- Run `git diff --stat` and confirm all modified files were reviewed
+- Each issue has a specific file:line reference
+- No false positives (re-read flagged lines to confirm)
 
 ## Output
 

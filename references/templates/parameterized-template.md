@@ -43,6 +43,12 @@ Verify that `$1` is valid:
 
 {Output format}
 
+## Verification
+
+{How to verify the command worked correctly with the given argument:}
+- {Test or check 1 — e.g., run tests on the generated output}
+- {Test or check 2 — e.g., validate the processed target matches expectations}
+
 ## Default Behavior
 
 If no argument provided:
@@ -91,6 +97,13 @@ Create a test file at `tests/test_{basename}.py` with:
 ### Step 4: Validate
 
 Run `pytest tests/test_{basename}.py -v` to verify tests pass.
+
+## Verification
+
+After generation, verify:
+- `pytest tests/test_{basename}.py -v` passes with 0 failures
+- Each public function in `$1` has at least one test
+- Test file follows project naming conventions
 
 ## Default Behavior
 
