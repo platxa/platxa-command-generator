@@ -118,12 +118,12 @@ class TestDescriptionValidation:
     """Tests for description field validation."""
 
     @pytest.mark.frontmatter
-    def test_description_too_long_warns(
+    def test_description_too_long_fails(
         self,
         temp_command_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Description longer than 60 chars generates warning."""
+        """Description longer than 60 chars is rejected."""
         long_desc = "x" * 65
 
         create_command_md(
@@ -134,9 +134,8 @@ class TestDescriptionValidation:
 
         result = run_validate_frontmatter(temp_command_dir / "long-desc.md")
 
-        # Should pass with warning (not an error for commands)
-        assert result.returncode == 0, f"Expected exit 0 (warning only). stderr: {result.stderr}"
-        assert "60" in result.stderr or "WARN" in result.stderr
+        assert result.returncode == 1, f"Expected exit 1 for >60 chars. stderr: {result.stderr}"
+        assert "60" in result.stderr or "ERROR" in result.stderr
 
     @pytest.mark.frontmatter
     def test_description_uppercase_start_warns(

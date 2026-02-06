@@ -202,7 +202,7 @@ echo "Checking optional fields..."
 if [[ -n "$DESC" ]] && ! $IS_SKILL; then
     DESC_LEN=${#DESC}
     if [[ $DESC_LEN -gt 60 ]]; then
-        warn "description exceeds recommended 60 chars: $DESC_LEN chars"
+        error "description exceeds 60 chars: $DESC_LEN chars (max 60)"
     else
         info "description length valid: $DESC_LEN chars"
     fi
