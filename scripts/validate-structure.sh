@@ -111,7 +111,30 @@ else
     error "$(basename "$COMMAND_FILE") is empty"
 fi
 
-# Check 4: If directory mode (self-validation), check SKILL.md has frontmatter
+# Check 4: Scan for placeholder content in command body
+if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+    echo ""
+    echo "Checking for placeholder content..."
+
+    # Extract body (after frontmatter if present)
+    FIRST_LINE=$(head -1 "$COMMAND_FILE")
+    if [[ "$FIRST_LINE" == "---" ]]; then
+        BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
+    else
+        BODY=$(cat "$COMMAND_FILE")
+    fi
+
+    PLACEHOLDER_PATTERNS='(TODO|TBD|FIXME|HACK|XXX|PLACEHOLDER|COMING SOON|NOT YET|IMPLEMENT ME)'
+
+    if echo "$BODY" | grep -qiE "$PLACEHOLDER_PATTERNS"; then
+        MATCH=$(echo "$BODY" | grep -iE "$PLACEHOLDER_PATTERNS" | head -1 | sed 's/^[[:space:]]*//')
+        error "Placeholder content found: $MATCH"
+    else
+        info "No placeholder content detected"
+    fi
+fi
+
+# Check 5: If directory mode (self-validation), check SKILL.md has frontmatter
 if $IS_DIR; then
     if head -1 "$COMMAND_FILE" 2>/dev/null | grep -q '^---$'; then
         info "SKILL.md has frontmatter"

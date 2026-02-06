@@ -171,6 +171,21 @@ class TestDirectoryMode:
         assert result.returncode == 1, "Expected exit 1 for non-executable script"
 
     @pytest.mark.structure
+    def test_placeholder_content_fails(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Command with placeholder content (TODO, FIXME) is rejected."""
+        command_md = temp_command_dir / "placeholder.md"
+        command_md.write_text("# My Command\n\nTODO: implement this step\n")
+
+        result = run_validate_structure(command_md)
+
+        assert result.returncode == 1, f"Expected exit 1 for placeholder. stderr: {result.stderr}"
+        assert "placeholder" in result.stderr.lower() or "TODO" in result.stderr
+
+    @pytest.mark.structure
     @pytest.mark.slow
     def test_large_files_warns(
         self,
