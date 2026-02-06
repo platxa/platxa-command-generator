@@ -62,7 +62,7 @@ class TestValidFrontmatter:
         create_command_md(
             temp_command_dir,
             name="valid-command",
-            description="Run tests with coverage",
+            description="run tests with coverage",
             tools=["Read", "Bash"],
             argument_hint="[pattern]",
         )
@@ -101,7 +101,7 @@ class TestValidFrontmatter:
         """Frontmatter with only description passes."""
         command_md = temp_command_dir / "desc-only.md"
         command_md.write_text("""---
-description: Run database migrations
+description: run database migrations
 ---
 
 # Migrate
@@ -137,6 +137,44 @@ class TestDescriptionValidation:
         # Should pass with warning (not an error for commands)
         assert result.returncode == 0, f"Expected exit 0 (warning only). stderr: {result.stderr}"
         assert "60" in result.stderr or "WARN" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_description_uppercase_start_warns(
+        self,
+        temp_command_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Description starting with uppercase generates warning."""
+        create_command_md(
+            temp_command_dir,
+            name="upper-desc",
+            description="Analyze test coverage",
+        )
+
+        result = run_validate_frontmatter(temp_command_dir / "upper-desc.md")
+
+        # Should pass with warning (not error)
+        assert result.returncode == 0, f"Expected exit 0 (warning only). stderr: {result.stderr}"
+        assert "lowercase" in result.stderr.lower() or "WARN" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_description_non_verb_start_warns(
+        self,
+        temp_command_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Description starting with non-verb word generates warning."""
+        create_command_md(
+            temp_command_dir,
+            name="nonverb-desc",
+            description="the test coverage analyzer tool",
+        )
+
+        result = run_validate_frontmatter(temp_command_dir / "nonverb-desc.md")
+
+        # Should pass with warning
+        assert result.returncode == 0, f"Expected exit 0 (warning only). stderr: {result.stderr}"
+        assert "verb" in result.stderr.lower() or "WARN" in result.stderr
 
     @pytest.mark.frontmatter
     def test_placeholder_in_description_fails(

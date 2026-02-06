@@ -210,6 +210,26 @@ if [[ -n "$DESC" ]] && ! $IS_SKILL; then
     if echo "$DESC" | grep -qiE '(TODO|TBD|FIXME|placeholder)'; then
         error "description contains placeholder text"
     fi
+
+    # Check that description starts with lowercase letter
+    FIRST_CHAR="${DESC:0:1}"
+    if [[ "$FIRST_CHAR" =~ [A-Z] ]]; then
+        warn "description should start with lowercase verb (e.g., 'analyze ...', not 'Analyze ...')"
+    elif [[ ! "$FIRST_CHAR" =~ [a-z] ]]; then
+        warn "description should start with a verb (first character is not a letter)"
+    else
+        info "description starts with lowercase"
+    fi
+
+    # Check for common non-verb starting patterns
+    FIRST_WORD=$(echo "$DESC" | awk '{print $1}')
+    NON_VERB_PATTERNS="the a an this that these those my our your its"
+    for pattern in $NON_VERB_PATTERNS; do
+        if [[ "${FIRST_WORD,,}" == "$pattern" ]]; then
+            warn "description should start with a verb, not '$FIRST_WORD' (e.g., 'analyze ...', 'generate ...')"
+            break
+        fi
+    done
 fi
 
 # Validate argument-hint if present
