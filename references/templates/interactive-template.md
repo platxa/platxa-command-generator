@@ -133,6 +133,43 @@ After generation, verify:
 Summary of created files with next steps.
 ```
 
+## AskUserQuestion Tool Pattern
+
+The AskUserQuestion tool accepts structured questions with options arrays:
+
+```
+Use the AskUserQuestion tool with:
+{
+  "questions": [
+    {
+      "question": "Which authentication method should we use?",
+      "header": "Auth method",
+      "options": [
+        {"label": "JWT tokens (Recommended)", "description": "Stateless, good for APIs"},
+        {"label": "Session cookies", "description": "Traditional, good for web apps"},
+        {"label": "API keys", "description": "Simple, good for service-to-service"}
+      ],
+      "multiSelect": false
+    }
+  ]
+}
+```
+
+### Multi-Step Wizard Pattern
+
+For multi-step flows, chain AskUserQuestion calls sequentially:
+
+1. **Step 1**: Ask high-level choices (1-2 questions)
+2. **Step 2**: Based on answers, ask follow-up questions (if needed)
+3. **Step 3**: Summarize choices and proceed
+
+Rules:
+- Maximum 4 questions per AskUserQuestion call
+- Maximum 4 options per question
+- Use `multiSelect: true` when choices aren't mutually exclusive
+- Put recommended option first with "(Recommended)" suffix
+- Users can always select "Other" for free-text input
+
 ## Key Characteristics
 
 - Includes `AskUserQuestion` in allowed-tools
