@@ -125,6 +125,36 @@ After generation, verify:
 If no component name provided, ask the user for one.
 ```
 
+## Plugin Metadata (plugin.json)
+
+When generating a plugin command, also create or update the plugin's `plugin.json`:
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "Short description of the plugin",
+  "commands": {
+    "build": {
+      "description": "build the project with defaults",
+      "file": "commands/build.md"
+    },
+    "test": {
+      "description": "run test suite with coverage",
+      "file": "commands/test.md"
+    }
+  }
+}
+```
+
+**Required fields**: `name`, `version`, `description`, `commands`
+
+Each command entry needs:
+- `description`: Same as the frontmatter description (or a summary)
+- `file`: Relative path to the command .md file within the plugin
+
+When adding a new command to an existing plugin, read the current `plugin.json` first and merge the new command entry.
+
 ## Key Characteristics
 
 - Uses `${CLAUDE_PLUGIN_ROOT}` for portable plugin-relative paths
