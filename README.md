@@ -4,7 +4,7 @@
 >
 > **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Version**: 1.0.0
 
-**54 files** | **63 tests** | **7 validators** | **4 subagents** | **6 command types**
+**64 files** | **74 tests** | **7 scripts** | **4 subagents** | **6 command types**
 
 ---
 
@@ -138,7 +138,7 @@ platxa-command-generator/
 │   │   ├── plugin-template.md         #   ${CLAUDE_PLUGIN_ROOT} paths
 │   │   ├── command-templates.md       #   Type selection guide
 │   │   └── anti-patterns.md           #   Common mistakes to avoid
-│   ├── patterns/                      # 16 implementation patterns
+│   ├── patterns/                      # 22 implementation patterns
 │   │   ├── command-types.md           #   Type classification decision tree
 │   │   ├── frontmatter-generator.md   #   Field creation rules
 │   │   ├── frontmatter-validator.md   #   Validation rules & constraints
@@ -154,7 +154,13 @@ platxa-command-generator/
 │   │   ├── quality-gate.md            #   Quality thresholds
 │   │   ├── error-handling.md          #   Error recovery patterns
 │   │   ├── context-handoff.md         #   Agent-to-agent data flow
-│   │   └── subagent-dispatch.md       #   Task tool delegation
+│   │   ├── subagent-dispatch.md       #   Task tool delegation
+│   │   ├── anti-patterns.md           #   Common anti-patterns catalog
+│   │   ├── command-vs-skill-vs-hook.md #  Extension type selection guide
+│   │   ├── continuous-learning.md     #   Post-generation improvement loops
+│   │   ├── hook-preprocessing.md      #   Hook output filtering patterns
+│   │   ├── sequential-composition.md  #   Command pipeline composition
+│   │   └── team-sharing.md            #   Multi-user distribution patterns
 │   └── spec/
 │       └── directory-layout.md        # Repository structure spec
 ├── scripts/                           # 7 validation & utility scripts
@@ -165,7 +171,7 @@ platxa-command-generator/
 │   ├── security-check.sh              #   Dangerous pattern scanning
 │   ├── install-command.sh             #   Install to user/project/plugin
 │   └── check-duplicates.py            #   Duplicate name/description detection
-├── tests/                             # 63 tests across 6 modules
+├── tests/                             # 74 tests across 6 modules
 │   ├── conftest.py                    #   Pytest fixtures (real file ops)
 │   ├── helpers.py                     #   Shared test utilities
 │   ├── test_validate_frontmatter.py   #   Frontmatter validation tests
@@ -177,7 +183,11 @@ platxa-command-generator/
 ├── assets/
 │   └── command-template/
 │       └── command.md                 # Blank command template
-└── commands/                          # Generated commands output
+└── commands/
+    └── examples/                      # Example commands
+        ├── explain.md                 #   Code explanation command
+        ├── test-file.md               #   Test runner command
+        └── release.md                 #   Release workflow command
 ```
 
 ---
@@ -188,8 +198,11 @@ Every generated command passes through a multi-gate validation pipeline:
 
 | Gate | Threshold | Type | Description |
 |------|-----------|------|-------------|
-| Structure | Pass | Hard | File exists, readable, `.md` extension, not empty |
-| Frontmatter | Pass | Hard | Valid YAML, all fields within constraints |
+| Structure | Pass | Hard | File exists, `.md` extension, not empty, H1 heading required |
+| Placeholders | Pass | Hard | No TODO/FIXME/placeholder text (whole-word matching) |
+| Prompt Specificity | Pass | Soft | No vague instructions; concrete tool/file references required |
+| Frontmatter | Pass | Hard | Valid YAML, known fields only, all constraints enforced |
+| Description | ≤ 60 chars | Hard | Lowercase verb start, no placeholders, no angle brackets |
 | Token Budget | < 4,000 | Hard | Recommended < 2,000 tokens |
 | Line Budget | < 600 | Hard | Recommended < 300 lines |
 | Security | Pass | Hard | No dangerous patterns or hardcoded credentials |
@@ -267,6 +280,20 @@ Validation Results for: my-command.md
   Result: PASS
 ══════════════════════════════════════
 ```
+
+---
+
+## Example Commands
+
+Three example commands are included in `commands/examples/`:
+
+| Command | Type | Description |
+|---------|------|-------------|
+| `explain.md` | Basic | Explains code in a specified file |
+| `test-file.md` | Parameterized | Runs tests for a specific file with coverage |
+| `release.md` | Workflow | Multi-step release workflow with changelog |
+
+Use these as references when creating new commands or to test the validation pipeline.
 
 ---
 
