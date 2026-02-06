@@ -10,6 +10,26 @@ Patterns for handling $1, $2, and $ARGUMENTS in commands.
 | `$2` | Second positional argument | `/copy src dest` → $2 = "dest" |
 | `$ARGUMENTS` | Full argument string | `/search foo bar` → $ARGUMENTS = "foo bar" |
 
+## $1/$2 vs $ARGUMENTS
+
+**Positional (`$1`, `$2`)**: Splits user input on spaces. Each word becomes a separate argument.
+- `/deploy staging eu-west` → `$1` = "staging", `$2` = "eu-west"
+- Best for: structured input with distinct parameters
+
+**Full string (`$ARGUMENTS`)**: Preserves the entire input as-is, including spaces.
+- `/search class UserAuth` → `$ARGUMENTS` = "class UserAuth"
+- Best for: search queries, free-text input, messages
+
+**When to use which**:
+
+| Scenario | Use | Why |
+|----------|-----|-----|
+| Distinct parameters (file, target) | `$1`, `$2` | Each param has a clear role |
+| Search queries with spaces | `$ARGUMENTS` | Spaces are part of the input |
+| Single argument (file path) | `$1` | Simple, one value |
+| Free-form text (commit message) | `$ARGUMENTS` | Preserves original phrasing |
+| Mixed: structured + free-text | `$1` + `$ARGUMENTS` | First arg for target, rest for details |
+
 ## Pattern: Single Required Argument
 
 ```markdown
