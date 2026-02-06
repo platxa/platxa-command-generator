@@ -41,6 +41,47 @@ allowed-tools:
   - Bash(npm:test)
 ```
 
+#### Bash Filter Syntax
+
+Bash filters restrict which shell commands a command can execute. Format: `Bash(prefix:pattern)`.
+
+```yaml
+# Allow only git commands
+- Bash(git:*)
+
+# Allow only specific git subcommands
+- Bash(git add:*)
+- Bash(git commit:*)
+- Bash(git diff:*)
+
+# Allow only npm/pnpm test commands
+- Bash(npm:test)
+- Bash(pnpm:test)
+
+# Allow only read-only operations
+- Bash(cat:*)
+- Bash(ls:*)
+
+# Multiple specific filters
+allowed-tools:
+  - Read
+  - Bash(git:*)
+  - Bash(npm:test)
+  - Bash(pytest:*)
+```
+
+**When to use Bash filters:**
+- Command needs shell access but should not run arbitrary commands
+- Restricting to version control operations only
+- Restricting to test/lint runners only
+- Preventing destructive commands (rm, chmod, etc.)
+
+**Syntax rules:**
+- Pattern is `Bash(command:subcommand_pattern)`
+- `*` matches any arguments after the command prefix
+- Multiple Bash filters can be listed — any matching filter allows execution
+- Without filters, `Bash` alone allows all shell commands
+
 ### argument-hint (optional)
 - Bracket format: `[description]`
 - Matches $1/$2 usage in body
