@@ -129,6 +129,30 @@ Do the thing.
         )
 
 
+class TestVagueInstructions:
+    """Tests for vague instruction detection."""
+
+    @pytest.mark.structure
+    def test_vague_instruction_warns(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Vague instructions like 'improve the code' generate warning."""
+        command_md = temp_command_dir / "vague.md"
+        command_md.write_text("""# Vague Command
+
+Look at the project and improve the code.
+Fix issues you find.
+""")
+
+        result = run_validate_structure(command_md)
+
+        # Should pass (warning, not error) but stderr should have warning
+        assert result.returncode == 0, f"Expected exit 0 (warning). stderr: {result.stderr}"
+        assert "vague" in result.stderr.lower() or "WARN" in result.stderr
+
+
 class TestDirectoryMode:
     """Tests for directory mode (self-validation with SKILL.md)."""
 

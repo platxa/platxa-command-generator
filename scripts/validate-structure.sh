@@ -177,7 +177,32 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     fi
 fi
 
-# Check 7: If directory mode (self-validation), check SKILL.md has frontmatter
+# Check 8: Warn if command contains vague instructions without specifics
+if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+    echo ""
+    echo "Checking for vague instructions..."
+
+    # Patterns like "improve the code" or "fix issues" without specific targets
+    VAGUE_PATTERNS='(^|\s)(improve|fix|update|enhance|optimize|refactor|clean up|make better)\s+(the\s+)?(code|it|things|stuff|everything|issues|problems)'
+
+    if [[ -z "${BODY:-}" ]]; then
+        FIRST_LINE=$(head -1 "$COMMAND_FILE")
+        if [[ "$FIRST_LINE" == "---" ]]; then
+            BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
+        else
+            BODY=$(cat "$COMMAND_FILE")
+        fi
+    fi
+
+    VAGUE_MATCH=$(echo "$BODY" | grep -iE "$VAGUE_PATTERNS" | head -1 | sed 's/^[[:space:]]*//')
+    if [[ -n "$VAGUE_MATCH" ]]; then
+        warn "Vague instruction detected: '$VAGUE_MATCH' — be specific about what to change and how"
+    else
+        info "No vague instructions detected"
+    fi
+fi
+
+# Check 9: If directory mode (self-validation), check SKILL.md has frontmatter
 if $IS_DIR; then
     if head -1 "$COMMAND_FILE" 2>/dev/null | grep -q '^---$'; then
         info "SKILL.md has frontmatter"
