@@ -135,8 +135,8 @@ if [[ -n "$BODY" ]]; then
 
     PLACEHOLDER_PATTERNS='(TODO|TBD|FIXME|HACK|XXX|PLACEHOLDER|COMING SOON|NOT YET|IMPLEMENT ME)'
 
-    if echo "$BODY" | grep -qiE "$PLACEHOLDER_PATTERNS"; then
-        MATCH=$(echo "$BODY" | grep -iE "$PLACEHOLDER_PATTERNS" | head -1 | sed 's/^[[:space:]]*//')
+    if echo "$BODY" | grep -qwiE "$PLACEHOLDER_PATTERNS"; then
+        MATCH=$(echo "$BODY" | grep -wiE "$PLACEHOLDER_PATTERNS" | head -1 | sed 's/^[[:space:]]*//')
         error "Placeholder content found: $MATCH"
     else
         info "No placeholder content detected"
