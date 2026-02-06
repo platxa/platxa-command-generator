@@ -17,8 +17,8 @@ Guidelines for keeping commands efficient and within limits.
 |-----------|-------|
 | SKILL.md | 5,000 tokens / 500 lines |
 | Single reference | 2,000 tokens |
-| All references | 10,000 tokens |
-| Total skill | 15,000 tokens |
+| All references | 30,000 tokens |
+| Total skill | 35,000 tokens |
 
 ## Why Token Budgets Matter
 

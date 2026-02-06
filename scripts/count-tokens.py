@@ -67,21 +67,23 @@ COMMAND_HARD_LIMITS = {
     "command_lines": 600,
 }
 
-# Skill-level limits (for self-validation of the generator directory)
+# Skill-level limits (for self-validation of the generator directory).
+# References are loaded on-demand, not all at once, so total limits
+# reflect maintainability rather than context window pressure.
 SKILL_LIMITS = {
     "skill_md_tokens": 5000,
     "skill_md_lines": 500,
     "single_ref_tokens": 2000,
-    "total_ref_tokens": 10000,
-    "total_skill_tokens": 15000,
+    "total_ref_tokens": 30000,
+    "total_skill_tokens": 35000,
 }
 
 SKILL_HARD_LIMITS = {
     "skill_md_tokens": 10000,
     "skill_md_lines": 1000,
     "single_ref_tokens": 4000,
-    "total_ref_tokens": 20000,
-    "total_skill_tokens": 30000,
+    "total_ref_tokens": 60000,
+    "total_skill_tokens": 70000,
 }
 
 
