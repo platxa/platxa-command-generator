@@ -69,8 +69,15 @@ if [[ -d "$TARGET" ]]; then
         chmod +x "$TARGET_DIR/scripts"/*.sh 2>/dev/null || true
     fi
 
-    echo ""
-    echo "Skill installed successfully to $TARGET_DIR"
+    # Verify installation
+    if [[ -f "$TARGET_DIR/SKILL.md" ]]; then
+        echo ""
+        echo "✓ Verified: SKILL.md exists at $TARGET_DIR/SKILL.md"
+        echo "Skill installed successfully to $TARGET_DIR"
+    else
+        echo "ERROR: Installation verification failed - SKILL.md not found at $TARGET_DIR/SKILL.md"
+        exit 1
+    fi
 else
     # File mode: installing a single command .md file
     COMMAND_FILE="$TARGET"
@@ -127,8 +134,15 @@ else
 
     cp "$COMMAND_FILE" "$TARGET_FILE"
 
-    echo ""
-    echo "Command installed successfully!"
-    echo "  File: $TARGET_FILE"
-    echo "  Use: /$COMMAND_NAME"
+    # Verify installation
+    if [[ -f "$TARGET_FILE" ]]; then
+        echo ""
+        echo "✓ Verified: command exists at $TARGET_FILE"
+        echo "Command installed successfully!"
+        echo "  File: $TARGET_FILE"
+        echo "  Use: /$COMMAND_NAME"
+    else
+        echo "ERROR: Installation verification failed - file not found at $TARGET_FILE"
+        exit 1
+    fi
 fi
