@@ -18,6 +18,15 @@ Target users: {target_users}
 
 ## Architecture Steps
 
+0. **Evaluate Abstraction Type**: Before designing a command, determine if the request is best served as:
+   - **Command**: User-invoked action (`/do-something`) — proceed to step 1
+   - **Skill**: Reusable knowledge loaded on demand — recommend skill instead
+   - **Hook**: Automatic validation on tool use — recommend hook instead
+   - **Agent**: Autonomous multi-step delegation — recommend agent instead
+
+   If not a command, output `"abstraction_type": "skill|hook|agent"` with rationale and stop.
+   Reference: `references/patterns/command-vs-skill-vs-hook.md`
+
 1. **Classify Command Type**: Determine which type best fits
    - Basic: No frontmatter, pure instructions
    - Standard: With allowed-tools and/or description
@@ -54,6 +63,8 @@ Target users: {target_users}
 
 ```json
 {
+  "abstraction_type": "command",
+  "abstraction_rationale": "User-invoked action that needs specific tool scoping",
   "command_type": "Basic|Standard|Parameterized|Interactive|Workflow|Plugin",
   "command_name": "hyphen-case-name",
   "frontmatter": {
