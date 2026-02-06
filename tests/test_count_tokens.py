@@ -106,6 +106,9 @@ class TestCommandTokenLimits:
             assert data["passed"] is True
         if data["command_tokens"] > 2000:
             assert any("exceeds" in w.lower() or "limit" in w.lower() for w in data["warnings"])
+            assert any("skill" in w.lower() for w in data["warnings"]), (
+                "Expected skill conversion suggestion in warnings"
+            )
 
 
 class TestCommandLineLimits:

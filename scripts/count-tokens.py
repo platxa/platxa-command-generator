@@ -142,6 +142,10 @@ def analyze_command_file(command_path: Path, warn_threshold: int = 80) -> TokenR
         warnings.append(
             f"Command exceeds recommended token limit: {tokens} > {limits['command_tokens']}"
         )
+        warnings.append(
+            "Consider converting to a skill — commands are re-processed every message, "
+            "skills load on demand. See references/patterns/command-vs-skill-vs-hook.md"
+        )
     elif tokens > limits["command_tokens"] * warn_threshold / 100:
         warnings.append(
             f"Command approaching token limit: {tokens} ({warn_threshold}% of {limits['command_tokens']})"
