@@ -42,20 +42,30 @@ Target users: {target_users}
    - model: Override model if specific reasoning needed
    - disable-model-invocation: Prevent AI from invoking the command
 
-3. **Plan Dynamic Features**: Determine argument and reference needs
+3. **Select Model Override** (if needed): Most commands use the user's default model. Only set `model` when the task demands it:
+
+   | Model | When to Use | Examples |
+   |-------|-------------|---------|
+   | `haiku` | Speed-critical, simple formatting, bulk operations | linting, formatting, simple lookups |
+   | `sonnet` | Balanced reasoning, code generation, analysis | test generation, code review, refactoring |
+   | `opus` | Complex architecture, multi-system reasoning, critical decisions | system design, security audit, migration planning |
+
+   **Default**: Omit `model` field (uses user's configured model). Only override when the command's task clearly requires a specific reasoning level.
+
+4. **Plan Dynamic Features**: Determine argument and reference needs
    - $1/$2: Positional arguments from user input
    - $ARGUMENTS: Full argument string
    - @file: File reference injection
    - !`bash`: Inline bash execution for dynamic content
 
-4. **Plan Sections**: Design command body structure
+5. **Plan Sections**: Design command body structure
    - Title (H1 heading)
    - Context/purpose explanation
    - Step-by-step instructions
    - Examples and edge cases
    - Output format specification
 
-5. **Token Budget**: Ensure efficiency
+6. **Token Budget**: Ensure efficiency
    - Recommended: < 2000 tokens, < 300 lines
    - Hard limit: < 4000 tokens, < 600 lines
 
