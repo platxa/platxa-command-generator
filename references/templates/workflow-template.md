@@ -171,6 +171,37 @@ If any phase fails:
 3. If Phase 4 fails, run rollback automatically
 ```
 
+## Multi-Agent Orchestration Pattern
+
+Workflow commands can use the Task tool to dispatch parallel subagents for independent work:
+
+```markdown
+### Phase 2: Parallel Analysis
+
+**Goal:** Analyze multiple aspects concurrently
+
+Use the Task tool to launch these analyses in parallel (all in a single message):
+
+1. **Security scan** (subagent_type="general-purpose"):
+   "Scan all files in src/ for security vulnerabilities. Report findings as JSON."
+
+2. **Test coverage** (subagent_type="general-purpose"):
+   "Analyze test coverage for src/. Report untested files and functions."
+
+3. **Dependency audit** (subagent_type="general-purpose"):
+   "Check package.json dependencies for known vulnerabilities and outdated versions."
+
+Wait for all agents to complete, then merge their findings into a unified report.
+
+**Exit criteria:** All three analyses complete and findings merged
+```
+
+Key rules for Task tool dispatch:
+- Launch independent subagents in a single message (parallel execution)
+- Each subagent gets a focused, self-contained prompt
+- Collect and merge results after all complete
+- Sequential phases must wait for prior phase results
+
 ## Key Characteristics
 
 - Multiple phases with clear entry/exit criteria
