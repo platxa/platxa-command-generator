@@ -47,6 +47,21 @@ Provide findings as structured JSON:
 }
 ```
 
+## Best Practices Context
+
+During research, reference these project resources for established patterns:
+
+- `references/patterns/command-types.md` — Command type classification criteria
+- `references/patterns/argument-patterns.md` — When to use `$1`/`$2` vs `$ARGUMENTS`
+- `references/patterns/anti-patterns.md` — Common mistakes to avoid in commands
+- `references/patterns/content-quality-scorer.md` — Quality scoring rubric (target >= 7.0)
+- `references/patterns/naming-conventions.md` — File naming and directory organization
+- `references/patterns/command-vs-skill-vs-hook.md` — When a command is the right choice vs skill or hook
+
+Incorporate relevant findings from these references into the discovery output's
+`best_practices` array so downstream agents (architecture, generation) have
+domain-informed context without re-reading the references.
+
 ## Sufficiency Criteria
 
 Research is sufficient when:
