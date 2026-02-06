@@ -134,7 +134,16 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     fi
 fi
 
-# Check 5: If directory mode (self-validation), check SKILL.md has frontmatter
+# Check 5: Warn if command lacks verification section
+if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+    if grep -qiE '^#{1,3}\s*(verification|verify|test|check)' "$COMMAND_FILE"; then
+        info "Verification section found"
+    else
+        warn "No verification section — commands should include how to verify results"
+    fi
+fi
+
+# Check 6: If directory mode (self-validation), check SKILL.md has frontmatter
 if $IS_DIR; then
     if head -1 "$COMMAND_FILE" 2>/dev/null | grep -q '^---$'; then
         info "SKILL.md has frontmatter"
