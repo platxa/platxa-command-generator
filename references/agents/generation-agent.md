@@ -112,6 +112,36 @@ If no argument provided:
 {Fallback behavior}
 ```
 
+### Plugin (with ${CLAUDE_PLUGIN_ROOT})
+```markdown
+---
+description: {verb-phrase ≤60 chars}
+allowed-tools:
+  - Read
+  - Write
+  - {OtherTools}
+---
+
+# {Command Title}
+
+## Plugin Resources
+
+- `${CLAUDE_PLUGIN_ROOT}/templates/{template}` — {purpose}
+- `${CLAUDE_PLUGIN_ROOT}/references/{ref}` — {purpose}
+
+## Workflow
+
+### Step 1: Load Plugin Resources
+
+Read templates from `${CLAUDE_PLUGIN_ROOT}/templates/`.
+
+### Step 2: {Generate Output}
+
+{Use plugin resources to produce files in user's project}
+```
+
+**Key rule**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's install directory at runtime. Use it for all plugin-relative paths. Output files go to the user's project, never the plugin directory.
+
 ## Quality Requirements
 
 - [ ] Frontmatter fields are valid (if present)
