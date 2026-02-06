@@ -261,6 +261,17 @@ if [[ -n "$TOOLS_KEY" ]]; then
             if ! echo "$VALID_TOOLS" | grep -qw "$BASE_TOOL"; then
                 error "Invalid tool: $TOOL"
             fi
+
+            # Validate Bash filter syntax if present
+            if [[ "$TOOL" == *"("* ]]; then
+                if [[ "$BASE_TOOL" != "Bash" ]]; then
+                    error "Filter syntax only supported for Bash, not: $TOOL"
+                elif [[ ! "$TOOL" =~ ^Bash\([a-zA-Z0-9_\ -]+:[^\)]+\)$ ]]; then
+                    error "Invalid Bash filter syntax: $TOOL (expected Bash(command:pattern))"
+                else
+                    info "Bash filter syntax valid: $TOOL"
+                fi
+            fi
         done
     else
         info "tools field present but empty"

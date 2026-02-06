@@ -299,6 +299,49 @@ allowed-tools:
         )
 
     @pytest.mark.frontmatter
+    def test_invalid_bash_filter_syntax_fails(
+        self,
+        temp_command_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Malformed Bash filter syntax is rejected."""
+        command_md = temp_command_dir / "bad-filter.md"
+        command_md.write_text("""---
+allowed-tools:
+  - Read
+  - Bash(invalid)
+---
+
+# Bad Filter
+""")
+
+        result = run_validate_frontmatter(command_md)
+
+        assert result.returncode == 1, f"Expected exit 1 for bad filter. stderr: {result.stderr}"
+        assert "filter" in result.stderr.lower() or "syntax" in result.stderr.lower()
+
+    @pytest.mark.frontmatter
+    def test_non_bash_filter_syntax_fails(
+        self,
+        temp_command_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Filter syntax on non-Bash tools is rejected."""
+        command_md = temp_command_dir / "read-filter.md"
+        command_md.write_text("""---
+allowed-tools:
+  - Read(src:*)
+  - Bash
+---
+
+# Non-Bash Filter
+""")
+
+        result = run_validate_frontmatter(command_md)
+
+        assert result.returncode == 1, f"Expected exit 1 for non-Bash filter. stderr: {result.stderr}"
+
+    @pytest.mark.frontmatter
     def test_invalid_tool_fails(
         self,
         temp_command_dir: Path,
