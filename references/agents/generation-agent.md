@@ -38,6 +38,19 @@ Output path: {output_path}
    - @file references with context explanation
    - !`bash` for runtime information
 
+   **Prefer dynamic over static**: When the command needs context that changes
+   at runtime (current branch, file contents, project structure), use `!`bash``
+   or `@file` instead of asking Claude to read/run at execution time. Dynamic
+   features inject context before Claude processes the prompt, reducing token
+   usage and improving reliability.
+
+   | Need | Use | Not |
+   |------|-----|-----|
+   | Current git branch | `!`git branch --show-current`` | "Run git branch" |
+   | File contents for review | `@file` | "Read the file at $1" |
+   | Project metadata | `!`cat package.json \| jq .version`` | "Check package.json" |
+   | List of changed files | `!`git diff --name-only`` | "Run git diff" |
+
 ## Command Template
 
 ### Basic (no frontmatter)
