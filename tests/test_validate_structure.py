@@ -153,6 +153,43 @@ Fix issues you find.
         assert "vague" in result.stderr.lower() or "WARN" in result.stderr
 
 
+class TestPromptSpecificity:
+    """Tests for prompt specificity check."""
+
+    @pytest.mark.structure
+    def test_no_concrete_references_warns(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Command with no file paths, code, or tool names generates warning."""
+        command_md = temp_command_dir / "generic.md"
+        command_md.write_text("# Generic Command\n\nDo something useful.\n")
+
+        result = run_validate_structure(command_md)
+
+        assert result.returncode == 0, f"Expected exit 0 (warning). stderr: {result.stderr}"
+        assert "concrete" in result.stderr.lower() or "WARN" in result.stderr
+
+    @pytest.mark.structure
+    def test_concrete_references_passes(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Command with backtick code references passes specificity check."""
+        create_command_md(
+            temp_command_dir,
+            name="specific",
+            content="# Specific Command\n\nRun `pytest tests/` and check results.\n",
+        )
+
+        result = run_validate_structure(temp_command_dir / "specific.md")
+
+        assert result.returncode == 0, f"Expected exit 0. stderr: {result.stderr}"
+        assert "concrete" in result.stdout.lower() or "Concrete" in result.stdout
+
+
 class TestDirectoryMode:
     """Tests for directory mode (self-validation with SKILL.md)."""
 

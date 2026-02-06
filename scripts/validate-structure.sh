@@ -111,18 +111,27 @@ else
     error "$(basename "$COMMAND_FILE") is empty"
 fi
 
-# Check 4: Scan for placeholder content in command body
+# Extract body (after frontmatter) once for all content checks
+BODY=""
 if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
-    echo ""
-    echo "Checking for placeholder content..."
-
-    # Extract body (after frontmatter if present)
     FIRST_LINE=$(head -1 "$COMMAND_FILE")
     if [[ "$FIRST_LINE" == "---" ]]; then
-        BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
+        # Find the closing --- (second occurrence), then take everything after it
+        CLOSING_LINE=$(awk 'NR>1 && /^---$/ { print NR; exit }' "$COMMAND_FILE")
+        if [[ -n "$CLOSING_LINE" ]]; then
+            BODY=$(tail -n +"$((CLOSING_LINE + 1))" "$COMMAND_FILE")
+        else
+            BODY=$(cat "$COMMAND_FILE")
+        fi
     else
         BODY=$(cat "$COMMAND_FILE")
     fi
+fi
+
+# Check 4: Scan for placeholder content in command body
+if [[ -n "$BODY" ]]; then
+    echo ""
+    echo "Checking for placeholder content..."
 
     PLACEHOLDER_PATTERNS='(TODO|TBD|FIXME|HACK|XXX|PLACEHOLDER|COMING SOON|NOT YET|IMPLEMENT ME)'
 
@@ -135,19 +144,9 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
 fi
 
 # Check 5: H1 heading required in command body
-if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+if [[ -n "$BODY" ]]; then
     echo ""
     echo "Checking for H1 heading..."
-
-    # Re-extract body if not already set
-    if [[ -z "${BODY:-}" ]]; then
-        FIRST_LINE=$(head -1 "$COMMAND_FILE")
-        if [[ "$FIRST_LINE" == "---" ]]; then
-            BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
-        else
-            BODY=$(cat "$COMMAND_FILE")
-        fi
-    fi
 
     if echo "$BODY" | grep -qE '^# '; then
         H1_LINE=$(echo "$BODY" | grep -E '^# ' | head -1)
@@ -178,23 +177,14 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
 fi
 
 # Check 8: Warn if command contains vague instructions without specifics
-if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+if [[ -n "$BODY" ]]; then
     echo ""
     echo "Checking for vague instructions..."
 
     # Patterns like "improve the code" or "fix issues" without specific targets
     VAGUE_PATTERNS='(^|\s)(improve|fix|update|enhance|optimize|refactor|clean up|make better)\s+(the\s+)?(code|it|things|stuff|everything|issues|problems)'
 
-    if [[ -z "${BODY:-}" ]]; then
-        FIRST_LINE=$(head -1 "$COMMAND_FILE")
-        if [[ "$FIRST_LINE" == "---" ]]; then
-            BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
-        else
-            BODY=$(cat "$COMMAND_FILE")
-        fi
-    fi
-
-    VAGUE_MATCH=$(echo "$BODY" | grep -iE "$VAGUE_PATTERNS" | head -1 | sed 's/^[[:space:]]*//')
+    VAGUE_MATCH=$(echo "$BODY" | grep -iE "$VAGUE_PATTERNS" | head -1 | sed 's/^[[:space:]]*//' || true)
     if [[ -n "$VAGUE_MATCH" ]]; then
         warn "Vague instruction detected: '$VAGUE_MATCH' — be specific about what to change and how"
     else
@@ -202,7 +192,26 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     fi
 fi
 
-# Check 9: If directory mode (self-validation), check SKILL.md has frontmatter
+# Check 9: Warn if command lacks concrete references (file paths, code, tool names)
+if [[ -n "$BODY" ]]; then
+    echo ""
+    echo "Checking prompt specificity..."
+
+    # Look for concrete references: file paths, backtick code, tool names, variables
+    HAS_CONCRETE=false
+    if echo "$BODY" | grep -qE '`[^`]+`'; then HAS_CONCRETE=true; fi
+    if echo "$BODY" | grep -qE '\$1|\$2|\$ARGUMENTS'; then HAS_CONCRETE=true; fi
+    if echo "$BODY" | grep -qE '\.(py|ts|js|md|sh|json|yaml|yml|toml)'; then HAS_CONCRETE=true; fi
+    if echo "$BODY" | grep -qwE '(Read|Write|Edit|Bash|Glob|Grep|Task|AskUserQuestion)'; then HAS_CONCRETE=true; fi
+
+    if $HAS_CONCRETE; then
+        info "Concrete references found (file paths, code, or tool names)"
+    else
+        warn "No concrete references found — commands should reference specific files, tools, or code patterns"
+    fi
+fi
+
+# Check 10: If directory mode (self-validation), check SKILL.md has frontmatter
 if $IS_DIR; then
     if head -1 "$COMMAND_FILE" 2>/dev/null | grep -q '^---$'; then
         info "SKILL.md has frontmatter"
