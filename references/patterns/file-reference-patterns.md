@@ -87,6 +87,58 @@ Provide a summary of:
 - Missing/extra elements
 ```
 
+## Pattern: Glob References
+
+Users can reference multiple files using glob patterns:
+
+```
+# Single file
+/review @src/auth.ts
+
+# Directory (all files in directory)
+/review @src/components/
+
+# Glob pattern (matching files)
+/review @./src/**/*.test.ts
+
+# Multiple glob patterns
+/review @./src/**/*.ts @./tests/**/*.ts
+```
+
+### Example: Glob-Based Analysis
+
+```markdown
+---
+description: analyze all test files for coverage patterns
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+---
+
+# Test Analysis
+
+Analyze the following test files:
+
+@file
+
+For each test file, check:
+1. Are all exported functions tested?
+2. Are edge cases covered?
+3. Are mocks properly cleaned up?
+```
+
+Usage: `/test-analysis @./src/**/*.test.ts`
+
+### Supported @file Formats
+
+| Format | Example | Resolves To |
+|--------|---------|-------------|
+| Single file | `@src/auth.ts` | Contents of one file |
+| Directory | `@src/components/` | All files in directory |
+| Glob | `@./src/**/*.ts` | All matching files |
+| Multiple | `@file1.ts @file2.ts` | Contents of both files |
+
 ## Best Practices
 
 - Explain what the referenced content represents
