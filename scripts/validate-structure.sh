@@ -134,7 +134,30 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     fi
 fi
 
-# Check 5: Warn if command lacks verification section
+# Check 5: H1 heading required in command body
+if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+    echo ""
+    echo "Checking for H1 heading..."
+
+    # Re-extract body if not already set
+    if [[ -z "${BODY:-}" ]]; then
+        FIRST_LINE=$(head -1 "$COMMAND_FILE")
+        if [[ "$FIRST_LINE" == "---" ]]; then
+            BODY=$(sed -n '/^---$/,/^---$/!p; /^---$/{ n; /^---$/!p; }' "$COMMAND_FILE" | sed '1,/^---$/d')
+        else
+            BODY=$(cat "$COMMAND_FILE")
+        fi
+    fi
+
+    if echo "$BODY" | grep -qE '^# '; then
+        H1_LINE=$(echo "$BODY" | grep -E '^# ' | head -1)
+        info "H1 heading found: $H1_LINE"
+    else
+        error "Missing H1 heading — every command must start with '# Title'"
+    fi
+fi
+
+# Check 6: Warn if command lacks verification section (renumbered)
 if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     if grep -qiE '^#{1,3}\s*(verification|verify|test|check)' "$COMMAND_FILE"; then
         info "Verification section found"

@@ -86,6 +86,49 @@ class TestMissingAndEmptyFiles:
         assert "empty" in result.stderr.lower() or "ERROR" in result.stderr
 
 
+class TestH1Heading:
+    """Tests for H1 heading requirement."""
+
+    @pytest.mark.structure
+    def test_missing_h1_heading_fails(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Command without H1 heading fails validation."""
+        command_md = temp_command_dir / "no-heading.md"
+        command_md.write_text("""Just some text without any heading.
+
+Do the thing.
+""")
+
+        result = run_validate_structure(command_md)
+
+        assert result.returncode == 1, (
+            f"Expected exit 1 for missing H1. stderr: {result.stderr}"
+        )
+        assert "h1" in result.stderr.lower() or "heading" in result.stderr.lower()
+
+    @pytest.mark.structure
+    def test_h1_heading_passes(
+        self,
+        temp_command_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Command with H1 heading passes."""
+        create_command_md(
+            temp_command_dir,
+            name="with-heading",
+            content="# My Command\n\nDo the thing.\n",
+        )
+
+        result = run_validate_structure(temp_command_dir / "with-heading.md")
+
+        assert result.returncode == 0, (
+            f"Expected exit 0 for command with H1. stderr: {result.stderr}"
+        )
+
+
 class TestDirectoryMode:
     """Tests for directory mode (self-validation with SKILL.md)."""
 
