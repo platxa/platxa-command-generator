@@ -66,7 +66,8 @@ Add to overall score (capped at 10.0):
 | Verification section present | +0.5 | `## Verification` heading with actionable checks |
 | Guardrails section present | +0.3 | `## Guardrails` heading with read-before-act rules |
 | Default Behavior for $1/$2 | +0.3 | `## Default Behavior` heading when command uses arguments |
-| Realistic examples | +0.2 | Examples use plausible file paths, commands, data |
+| Examples section present | +0.3 | `## Examples` or `## Example` heading with usage demonstrations |
+| Examples are realistic | +0.2 | Examples use plausible file paths, commands, data |
 
 ```
 final_score = min(10.0, overall + bonus)
