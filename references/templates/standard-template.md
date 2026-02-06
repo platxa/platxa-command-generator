@@ -26,11 +26,16 @@ allowed-tools:
 
 {When to use this command and what it does.}
 
+## Guardrails
+
+- Read existing state before making changes
+- {Additional safety check — e.g., verify preconditions are met}
+
 ## Workflow
 
-### Step 1: {Action Name}
+### Step 1: Understand Current State
 
-{Specific instructions with tool usage}
+{Read relevant files, logs, or configuration to understand context before acting}
 
 ### Step 2: {Action Name}
 
@@ -114,3 +119,4 @@ Present findings as a table:
 - description starts with lowercase verb
 - Tools are scoped to what the command actually needs
 - Most common command type for team workflows
+- Step 1 reads context before acting (guardrail pattern)

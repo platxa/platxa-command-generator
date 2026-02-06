@@ -28,6 +28,11 @@ allowed-tools:
 
 {When to use this command. Explain the interactive flow.}
 
+## Guardrails
+
+- Read existing project patterns before asking questions
+- Verify current state before generating or modifying files
+
 ## Workflow
 
 ### Step 1: Gather Requirements
@@ -135,3 +140,4 @@ Summary of created files with next steps.
 - Handles branching based on user choices
 - Minimizes questions (2-4 max to avoid prompt fatigue)
 - Uses smart defaults where possible
+- Reads existing patterns before asking questions (guardrail pattern)

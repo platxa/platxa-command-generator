@@ -27,13 +27,20 @@ Target: $1
 
 {When to use this command. Explain what $1 represents.}
 
+## Guardrails
+
+- Read the target (`$1`) before modifying it
+- Validate input exists and is accessible before processing
+
 ## Workflow
 
-### Step 1: Validate Input
+### Step 1: Validate and Read Target
 
 Verify that `$1` is valid:
 - {Validation check 1}
 - {Validation check 2}
+
+Read `$1` to understand its current state before making changes.
 
 ### Step 2: Process Target
 
@@ -131,3 +138,4 @@ Full args: $ARGUMENTS
 - References `$1`, `$2`, or `$ARGUMENTS` in body
 - Always includes fallback behavior for missing arguments
 - argument-hint uses bracket notation: `[arg]` for optional, `<arg>` avoided
+- Step 1 validates and reads target before acting (guardrail pattern)

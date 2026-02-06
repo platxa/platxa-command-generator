@@ -31,17 +31,22 @@ allowed-tools:
 
 {When to use this command. Explain the multi-phase nature.}
 
+## Guardrails
+
+- Phase 1 must read and understand current state before any modifications
+- Never skip directly to execution without analysis phase
+
 ## Phases
 
-### Phase 1: {Phase Name}
+### Phase 1: {Analysis / Understanding}
 
-**Goal:** {What this phase accomplishes}
+**Goal:** Read and understand current state before making changes
 
-1. {Step 1}
-2. {Step 2}
-3. {Step 3}
+1. {Read relevant files, logs, or data}
+2. {Identify what exists and what needs to change}
+3. {Assess risks or dependencies}
 
-**Exit criteria:** {How to know this phase is complete}
+**Exit criteria:** {Current state documented and understood}
 
 ### Phase 2: {Phase Name}
 
@@ -173,3 +178,4 @@ If any phase fails:
 - Includes error recovery instructions
 - Task tool for delegating complex sub-tasks
 - Each phase is self-contained and verifiable
+- Phase 1 always reads/analyzes before later phases modify (guardrail pattern)

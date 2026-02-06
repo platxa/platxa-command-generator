@@ -35,6 +35,11 @@ This command uses files from the plugin directory:
 - `${CLAUDE_PLUGIN_ROOT}/scripts/{script}` — {purpose}
 - `${CLAUDE_PLUGIN_ROOT}/references/{ref}` — {purpose}
 
+## Guardrails
+
+- Load and read plugin resources before generating output
+- Read existing project files before overwriting them
+
 ## Workflow
 
 ### Step 1: Load Plugin Resources
@@ -127,3 +132,4 @@ If no component name provided, ask the user for one.
 - Output goes to the user's project (not the plugin directory)
 - Often combined with parameterized pattern ($1 for target names)
 - Plugin commands are namespaced: `/plugin-name:command-name`
+- Reads plugin resources and project state before generating (guardrail pattern)

@@ -19,9 +19,14 @@ Template for commands with no frontmatter. Pure markdown instructions.
 
 {When to use this command and what problem it solves.}
 
+## Guardrails
+
+- Read existing state before making changes
+- {Additional safety check — e.g., confirm target exists before modifying}
+
 ## Instructions
 
-1. {Step 1 with concrete action}
+1. {Read/understand current context — e.g., read files, check logs, review state}
 2. {Step 2 with concrete action}
 3. {Step 3 with concrete action}
 
@@ -78,3 +83,4 @@ Provide a summary with:
 - All Claude Code tools available by default
 - Simplest command type
 - Best for < 100 lines
+- First instruction should read context before acting (guardrail pattern)
