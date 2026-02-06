@@ -143,7 +143,18 @@ if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
     fi
 fi
 
-# Check 6: If directory mode (self-validation), check SKILL.md has frontmatter
+# Check 6: Warn if parameterized command lacks fallback for missing arguments
+if [[ -f "$COMMAND_FILE" ]] && [[ -s "$COMMAND_FILE" ]]; then
+    if grep -qE '\$1|\$2|\$ARGUMENTS' "$COMMAND_FILE"; then
+        if grep -qiE '^#{1,3}\s*(default behavior|fallback|missing argument)' "$COMMAND_FILE"; then
+            info "Parameterized command has fallback section"
+        else
+            warn "Uses \$1/\$2 but no 'Default Behavior' section for missing arguments"
+        fi
+    fi
+fi
+
+# Check 7: If directory mode (self-validation), check SKILL.md has frontmatter
 if $IS_DIR; then
     if head -1 "$COMMAND_FILE" 2>/dev/null | grep -q '^---$'; then
         info "SKILL.md has frontmatter"
