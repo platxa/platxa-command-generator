@@ -142,6 +142,41 @@ Read templates from `${CLAUDE_PLUGIN_ROOT}/templates/`.
 
 **Key rule**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's install directory at runtime. Use it for all plugin-relative paths. Output files go to the user's project, never the plugin directory.
 
+## Context Efficiency
+
+Commands run inside Claude's context window. Every instruction, example, and
+reference consumes tokens on every invocation. Optimize for minimal context:
+
+- **Delegate verbose operations to subagents**: If the command needs to search
+  the codebase, analyze many files, or perform extensive research, use the
+  `Task` tool with a specialized subagent instead of inline instructions.
+  Subagent output is summarized before returning, saving context.
+
+  ```markdown
+  ## Workflow
+
+  ### Step 1: Analyze Codebase
+
+  Use the Task tool with subagent_type="Explore" to find all API endpoints
+  and their request/response types. Summarize findings before proceeding.
+  ```
+
+- **Prefer `@file` over inline content**: Instead of pasting file contents
+  into the command, reference them with `@file` so they load on demand.
+
+- **Keep examples concise**: One realistic example is better than three
+  trivial ones. Trim boilerplate from examples.
+
+- **Avoid repetition**: State a rule once. Don't restate the same constraint
+  in both the instructions and the verification section.
+
+| Pattern | Context Cost | Alternative |
+|---------|-------------|-------------|
+| Inline 200-line reference | High | `@file` or `Read` in workflow |
+| Search 50 files in main prompt | High | `Task` with Explore subagent |
+| 5 similar examples | Medium | 1-2 distinct examples |
+| Repeated constraint | Low but noisy | State once, reference by name |
+
 ## Quality Requirements
 
 - [ ] Frontmatter fields are valid (if present)
