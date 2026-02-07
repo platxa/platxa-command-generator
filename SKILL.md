@@ -53,12 +53,13 @@ These rules are MANDATORY. They override optimization instincts, shortcut impuls
 
 ### Violation Detection
 
-If you find yourself doing ANY of the following, STOP immediately and dispatch the correct subagent:
+If you find yourself doing ANY of the following, STOP immediately and correct:
 
 - Reading `~/.claude/commands/` or `.claude/commands/` to check for duplicates → **use Discovery subagent**
 - Searching for domain best practices or patterns inline → **use Discovery subagent**
 - Writing the command `.md` file content directly in the main conversation → **use Generation subagent**
 - Assessing quality score mentally without running scripts → **run the 4 validation scripts**
+- Discovery subagent browsing unrelated projects or directories → **scope violation — constrain to Part 2 paths only**
 
 ### Why Subagents Are Non-Negotiable
 
@@ -99,14 +100,22 @@ Ask the user for:
 
 ### Phase 2: Discovery (MANDATORY Subagent)
 
-**MUST** dispatch `Task(subagent_type="Explore")` with a prompt covering:
-1. Search for domain best practices via web search and codebase analysis
-2. Analyze existing commands in `~/.claude/commands/` and `.claude/commands/`
-3. Identify tool requirements and argument needs
-4. Determine command type classification
-5. Check for duplicates or overlap with existing commands
+**MUST** dispatch `Task(subagent_type="Explore")` with a prompt structured in exactly two parts:
 
-**DO NOT** perform any of the above inline. Even if you "already know" the domain, the Discovery subagent MUST run to ensure completeness and catch duplicates.
+**Part 1 — Web Research** (domain best practices):
+- Search the web for current best practices relevant to the command's domain
+- Identify recommended libraries, patterns, and standards
+- Determine tool requirements and argument needs
+
+**Part 2 — Duplicate Check** (filename-only):
+- List filenames in `commands/` directory in this project
+- Report if any filename matches or is similar to the command being created
+- **DO NOT read or open any existing command file — filenames only**
+- **DO NOT search any other directory**
+
+**DO NOT** perform any of the above inline. The Discovery subagent MUST run.
+
+**Scope Constraint**: The subagent searches the web (Part 1) and lists filenames in `commands/` (Part 2). Nothing else.
 
 **Sufficiency Check**: After the subagent returns, evaluate research completeness. Only ask user for clarification if gaps exist.
 
