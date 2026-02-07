@@ -77,7 +77,7 @@ Use Task tool with `subagent_type="Explore"` to:
 Based on discovery, determine:
 - **Command Type**: Basic, Standard, Parameterized, Interactive, Workflow, or Plugin
 - **Frontmatter Fields**: Which optional fields are needed
-- **Dynamic Features**: $1/$2, @file, !`bash`, ${CLAUDE_PLUGIN_ROOT}
+- **Dynamic Features**: $1/$2, @file, inline bash execution, ${CLAUDE_PLUGIN_ROOT}
 - **Token Budget**: Recommended 2000 tokens / 300 lines
 
 Generate architecture blueprint:
@@ -100,7 +100,7 @@ Generate architecture blueprint:
 Create the command .md file:
 1. Generate frontmatter from architecture blueprint (if needed)
 2. Write command body using template from `references/templates/`
-3. Include dynamic features ($1, @file, !`bash`) as specified
+3. Include dynamic features ($1, @file, inline bash) as specified
 4. Add realistic examples and edge case handling
 5. Write file to output location
 
@@ -132,7 +132,7 @@ Copy file and verify installation.
 | Positional args | `$1`, `$2` | `/deploy staging` → $1 = "staging" |
 | All arguments | `$ARGUMENTS` | `/search foo bar` → "foo bar" |
 | File reference | `@file` | Content injected from referenced file |
-| Bash execution | `` !`cmd` `` | Output replaces backtick block |
+| Bash execution | Exclamation + backtick-wrapped command | Output replaces backtick block |
 | Plugin root | `${CLAUDE_PLUGIN_ROOT}` | Absolute path to plugin directory |
 
 ## Frontmatter Fields
