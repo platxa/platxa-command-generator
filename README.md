@@ -183,11 +183,7 @@ platxa-command-generator/
 ├── assets/
 │   └── command-template/
 │       └── command.md                 # Blank command template
-└── commands/
-    └── examples/                      # Example commands
-        ├── explain.md                 #   Code explanation command
-        ├── test-file.md               #   Test runner command
-        └── release.md                 #   Release workflow command
+└── commands/                          # Generated commands
 ```
 
 ---
@@ -280,20 +276,6 @@ Validation Results for: my-command.md
   Result: PASS
 ══════════════════════════════════════
 ```
-
----
-
-## Example Commands
-
-Three example commands are included in `commands/examples/`:
-
-| Command | Type | Description |
-|---------|------|-------------|
-| `explain.md` | Basic | Explains code in a specified file |
-| `test-file.md` | Parameterized | Runs tests for a specific file with coverage |
-| `release.md` | Workflow | Multi-step release workflow with changelog |
-
-Use these as references when creating new commands or to test the validation pipeline.
 
 ---
 

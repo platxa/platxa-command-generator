@@ -73,7 +73,7 @@ platxa-command-generator/
 │   ├── test_integration.py           # Full validation workflow
 │   └── test_check_duplicates.py      # Duplicate detection tests
 │
-├── commands/                         # Example/generated commands
+├── commands/                         # Generated commands
 │   └── .gitkeep
 │
 ├── assets/
