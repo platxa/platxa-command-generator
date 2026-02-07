@@ -38,6 +38,42 @@ This skill guides you through creating production-ready Claude Code slash comman
 
 The workflow uses Task tool subagents for each phase, ensuring deep expertise at every step.
 
+## CRITICAL: Workflow Enforcement Rules
+
+These rules are MANDATORY. They override optimization instincts, shortcut impulses, and "I already know the answer" reasoning.
+
+### Required Subagent Phases
+
+| Phase | Tool Call | Skippable? |
+|-------|-----------|------------|
+| Phase 2: Discovery | `Task(subagent_type="Explore")` | NEVER |
+| Phase 3: Architecture | Inline (main conversation) | — |
+| Phase 4: Generation | `Task(subagent_type="general-purpose")` | NEVER |
+| Phase 5: Validation | `Bash` (run all 4 scripts) | NEVER |
+
+### Violation Detection
+
+If you find yourself doing ANY of the following, STOP immediately and dispatch the correct subagent:
+
+- Reading `~/.claude/commands/` or `.claude/commands/` to check for duplicates → **use Discovery subagent**
+- Searching for domain best practices or patterns inline → **use Discovery subagent**
+- Writing the command `.md` file content directly in the main conversation → **use Generation subagent**
+- Assessing quality score mentally without running scripts → **run the 4 validation scripts**
+
+### Why Subagents Are Non-Negotiable
+
+- **Context isolation**: Subagents get clean context, producing higher-quality focused output
+- **Independent review**: Generation and validation happen in separate contexts, preventing self-confirmation bias
+- **Reproducibility**: Consistent results regardless of main conversation state or prior context
+- **Auditability**: Each phase has clear inputs and outputs that can be traced
+
+### Enforcement Language Key
+
+Throughout this document:
+- **MUST** / **MANDATORY** = non-negotiable, always required
+- **SHOULD** = strongly recommended, skip only with explicit user override
+- **MAY** = optional, use judgment
+
 ## Command Types
 
 | Type | Frontmatter | Dynamic Features | Use Case |
@@ -61,16 +97,18 @@ Ask the user for:
 - Command description (what should it do?)
 - Target users (who will use it?)
 
-### Phase 2: Discovery (Automatic)
+### Phase 2: Discovery (MANDATORY Subagent)
 
-Use Task tool with `subagent_type="Explore"` to:
-1. Search for domain best practices
+**MUST** dispatch `Task(subagent_type="Explore")` with a prompt covering:
+1. Search for domain best practices via web search and codebase analysis
 2. Analyze existing commands in `~/.claude/commands/` and `.claude/commands/`
 3. Identify tool requirements and argument needs
 4. Determine command type classification
 5. Check for duplicates or overlap with existing commands
 
-**Sufficiency Check**: Evaluate research completeness. Only ask user for clarification if gaps exist.
+**DO NOT** perform any of the above inline. Even if you "already know" the domain, the Discovery subagent MUST run to ensure completeness and catch duplicates.
+
+**Sufficiency Check**: After the subagent returns, evaluate research completeness. Only ask user for clarification if gaps exist.
 
 ### Phase 3: Architecture
 
@@ -95,18 +133,35 @@ Generate architecture blueprint:
 }
 ```
 
-### Phase 4: Generation
+### Phase 4: Generation (MANDATORY Subagent)
 
-Create the command .md file:
+**MUST** dispatch `Task(subagent_type="general-purpose")` with a prompt that includes:
+- The architecture blueprint from Phase 3
+- The relevant template path from `references/templates/`
+- The discovery findings from Phase 2
+- The output file path: `commands/{command-name}.md`
+
+The Generation subagent creates the command .md file:
 1. Generate frontmatter from architecture blueprint (if needed)
 2. Write command body using template from `references/templates/`
 3. Include dynamic features ($1, @file, inline bash) as specified
 4. Add realistic examples and edge case handling
 5. Write file to output location
 
-### Phase 5: Validation
+**DO NOT** write the command file directly from the main conversation. The subagent gets a clean context for focused, high-quality generation.
 
-Run quality checks:
+### Phase 5: Validation (MANDATORY Scripts)
+
+**MUST** run all 4 validation scripts via Bash. Do NOT self-assess quality.
+
+```bash
+./scripts/validate-structure.sh commands/{name}.md
+./scripts/validate-frontmatter.sh commands/{name}.md
+python3 scripts/count-tokens.py commands/{name}.md
+./scripts/security-check.sh commands/{name}.md
+```
+
+All 4 MUST pass. Then assess content quality score (>= 7.0/10):
 - [ ] File structure is valid (.md, readable, not empty)
 - [ ] Frontmatter fields are correct (if present)
 - [ ] Token budget within limits (< 4000 hard, < 2000 recommended)
@@ -114,7 +169,7 @@ Run quality checks:
 - [ ] No security issues (dangerous patterns, credentials)
 - [ ] Content quality score >= 7.0/10
 
-If score < 7.0, route to rework phase (max 2 iterations).
+If score < 7.0 or any script fails, dispatch Generation subagent again (max 2 rework iterations).
 
 ### Phase 6: Installation
 
@@ -155,22 +210,45 @@ All frontmatter fields are **optional** for commands:
 User: /platxa-command-generator
 Assistant: What command would you like to create?
 User: A command that runs tests for a specific file with coverage
-Assistant: [Discovers pytest/jest patterns, coverage tools...]
-Assistant: [Classifies as Parameterized type with $1 for file path]
-Assistant: [Generates run-tests.md with argument-hint: [file-path]]
-Assistant: Quality score: 8.4/10. Install to .claude/commands/? (y/n)
+
+[Phase 2] Assistant dispatches: Task(subagent_type="Explore")
+  → Subagent researches pytest/jest coverage patterns
+  → Subagent checks ~/.claude/commands/ for duplicates
+  → Returns: domain findings, no duplicates found
+
+[Phase 3] Assistant determines architecture inline:
+  → Type: Parameterized, argument-hint: [file-path]
+  → Tools: Read, Glob, Bash(pytest:*), Bash(npx:jest)
+
+[Phase 4] Assistant dispatches: Task(subagent_type="general-purpose")
+  → Subagent receives blueprint + template path + discovery findings
+  → Subagent writes commands/run-tests.md
+
+[Phase 5] Assistant runs 4 validation scripts via Bash
+  → All pass. Quality score: 8.4/10
+
+[Phase 6] Assistant asks: Install to ~/.claude/commands/? (y/n)
 ```
 
 ### Example 2: Creating a Deploy Workflow Command
 
 ```
 User: /platxa-command-generator
-Assistant: What command would you like to create?
 User: A multi-step deploy command with safety checks
-Assistant: [Discovers deployment best practices, rollback patterns...]
-Assistant: [Classifies as Workflow type with TodoWrite for progress]
-Assistant: [Generates deploy.md with phases: validate, build, deploy, verify]
-Assistant: Quality score: 7.6/10. Ready to install.
+
+[Phase 2] Task(subagent_type="Explore")
+  → Researches deployment best practices, rollback patterns
+  → Finds no duplicate deploy commands
+
+[Phase 3] Architecture (inline):
+  → Type: Workflow, Tools: Read, Bash, TodoWrite, AskUserQuestion
+
+[Phase 4] Task(subagent_type="general-purpose")
+  → Generates deploy.md with phases: validate, build, deploy, verify
+
+[Phase 5] Bash: 4 validators → All pass. Score: 7.6/10
+
+[Phase 6] Installation prompt
 ```
 
 ## Output Checklist
